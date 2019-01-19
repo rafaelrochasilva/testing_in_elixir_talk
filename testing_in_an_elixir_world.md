@@ -17,24 +17,13 @@ slidenumbers: true
 ---
 # Agenda
 
-- Reflections on specifications and software development
+- Specifications and software development
 - Base test concepts
 - Testing with Elixir
 
 ---
 
-# When we start a **user story**,
----
-
-# read the description,
-
----
-
-# the acceptance criteria,
-
----
-
-# and start coding
+## When we start a **user story**, read the description, the acceptance criteria, and start coding
 
 ---
 
@@ -115,7 +104,7 @@ slidenumbers: true
 
 ---
 
-## Example:
+## Lets practice?
 
 As a User, I want to fetch products from abcprincing.com so that we can store the current name and price of a given product in memory.
 
