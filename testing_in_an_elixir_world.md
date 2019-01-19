@@ -18,94 +18,133 @@ slidenumbers: true
 # Agenda
 
 - Reflections on specifications and software development
-- Base test concepts to create health software
-- Testing in an Elixir world
+- Base test concepts
+- Testing with Elixir
 
 ---
 
-### Reflections on **specifications** and software development
+# When we start a **user story**,
+---
+
+# read the description,
 
 ---
 
-### When we start a **user story**, we read the description, the acceptance criteria, and start coding, but….
+# the acceptance criteria,
 
 ---
 
-### How tests can reflect **specifications** and help us to build **confident code**?
+# and start coding
 
 ---
 
-### Are we bringing the specifications into code?
+# But…
 
 ---
 
-### Before **answering** those questions, we need some base testing **concepts** to create **health software**
+# Are you bringing the specifications into code?
+![](specs.jpg)
 
 ---
 
-### Why testing?
-
-- Be **self-confident** about your deliverables
-
-- Keep the project **costs low**
-
-- Guarantee internal and external **quality**
+# Are you confident about your deliverables?
+![inline](bug.jpg)
 
 ---
 
-### What are the types of tests?
-**Acceptance:**
-- Tests a functional requirement, usually by UI
+# How to bring the **specifications** into code?
 
-**Integration:**
-- Test between acceptance and unit, testing behavior of 2 or more entities together
+---
 
-**Unit:**
+# Before **answering** those questions
+
+---
+
+# we need some **BASE TESTING concepts**
+
+---
+
+# Why __testing__?
+
+---
+
+# Be **self-confident**
+![](confident.jpg)
+
+---
+
+# Organize thoghts
+![](thoughts.jpg)
+
+---
+
+# Keep the **costs low**
+![](low_costs.jpg)
+
+---
+
+![](quality.jpg)
+
+---
+
+# What are the types of tests?
+
+---
+
+# Acceptance:
+- Generally expressed as a usage scenario.
+- End to end
+- Close to the UI
+
+---
+
+# Integration:
+- Test between acceptance and unit
+- Test the behavior of 2 or more entities
+
+---
+
+# Unit:
 - Tests the behavior of 1 entity
 
 ---
 
-### Test pyramid
+# Test pyramid
 
 ![inline](pyramid.jpg)
 
 ---
 
-### What about Test Quality?
-
-- Is the test verifying correct code behavior?
-- Is it easy to understand?
-
----
-
-### Firstly, let's get an example:
+## Example:
 
 As a User, I want to fetch products from abcprincing.com so that we can store the current name and price of a given product in memory.
 
-Acceptance Criteria:
+---
+
+## Acceptance Criteria:
 - All products name and price should be fetched and stored in memory.
 - The product name should be capitalized
 
 ---
 
-### Let's use an Outside-in approach to guide us during the development.
-
-Basically what we have to do are 3 tasks:
+## Basically what we have to do:
 
 1) Fetch Products from the API
-2) Build a tuple with id, capitalize name and price
+2) Build a structure with id, capitalize name and price
 3) Consume the data in memory
 
 ---
 
-### Since we are doing an outside-in approach, the first thing we should do is create an Entity to fetch data from an external API.
-
-
-### To keep the data in memory we will use Genserver.
+# Let's use an Outside-in approach
+![](outsidein.jpg)
 
 ---
 
-### What is a Genserver?
+## To keep the data in memory we will use Genserver.
+
+---
+
+## What is a Genserver?
 
 
 “A GenServer is a process like any other Elixir process and it can be used to keep state, execute code asynchronously and so on."
@@ -115,17 +154,12 @@ Basically what we have to do are 3 tasks:
 ```elixir
 defmodule GreenBox.PriceUpdater do
   use GenServer
-
-  @time_to_consume 10000 # 10 seconds
+  @time_to_consume 10000
 
   def start_link do
     GenServer.start_link(__MODULE__, [])
   end
 
-  @doc """
-  Starts the Genserver to process the work, and schedule the next time the
-  work will be done again
-  """
   def init(_) do
     state = build_products()
     schedule_work()
@@ -167,6 +201,15 @@ defmodule GreenBox.PriceUpdater do
     |> proccess_products
   end
 
+  defp fetch_products do
+    response = HTTPoison.get!("http://abcproducts.com/products")
+    Poison.decode!(response.body)
+  end
+```
+
+---
+
+```elixir
   defp proccess_products(products) do
     Enum.map(products, fn %{id: id, name: name, price: price} ->
       new_name = name |> String.downcase() |> String.capitalize()
@@ -179,31 +222,32 @@ defmodule GreenBox.PriceUpdater do
     end)
   end
 
-  defp fetch_products do
-    [
-      %{id: "1234", name: "BLUE OCEAN CREAM", price: Enum.random(8000..10000)},
-      %{id: "1235", name: "SEA SOAP", price: Enum.random(5000..60000)}
-    ]
-  end
 end
 ```
 
 ---
 
-### How can I test GenServer?
+# How can I test GenServer?
 
 ---
 
-### Be careful don't test your servers through the callbacks, other wise you are going to test the GenServer implementation.
+# Be careful to not test your servers through the callbacks
 
 ---
 
-### What should I do?
-### Should I avoid creating tests?
+# other wise you are going to test the GenServer implementation.
 
 ---
 
-### Change your Design!
+# What should I do?
+
+---
+
+# Should I avoid creating tests?
+
+---
+
+# Listen to your code and Change your Design!
 
 ---
 
@@ -211,15 +255,22 @@ end
 
 ---
 
-### That been said, lets refactory our code and let guide us
+# That been said, lets refactory our code
+
+---
+# and let the tests guide us
 
 ---
 
-#### But before start doing the test, I want to share some REALLY valuable concepts about Test.
+# But before start doing the test
 
 ---
 
-### Clarity
+# I want to share some REALLY valuable concepts about Test.
+
+---
+
+# Clarity
 
 A test is **easy** to understand when we can see the **cause and consequence** between the **phases** of the test.
 
@@ -229,20 +280,16 @@ A test is **easy** to understand when we can see the **cause and consequence** b
 
 ---
 
-### Let's see how it will work for our example
+# Let's see how it will work for our example
 
 ---
 
-![inline](design.jpg)
-
----
-
-#### Extract GenServer code to a new entity
+## Extract GenServer code to a new entity
 
 ```elixir
+# Move this code to a new entity
  defp build_products() do
-    fetch_products()
-    |> proccess_products
+    fetch_products() |> proccess_products()
   end
 
   defp proccess_products(products) do
@@ -256,34 +303,44 @@ A test is **easy** to understand when we can see the **cause and consequence** b
       }
     end)
   end
+```
 
+---
+
+```elixir
+# Move this code to a new entity
   defp fetch_products do
-    [
-      %{id: "1234", name: "BLUE OCEAN CREAM", price: Enum.random(8000..10000)},
-      %{id: "1235", name: "SEA SOAP", price: Enum.random(5000..60000)}
-    ]
+    response = HTTPoison.get!("http://abcproducts.com/products")
+    Poison.decode!(response.body)
   end
 end
 ```
 
 ---
 
-#### Let tests guide the development
+## Let tests guide the development
 
+[.code-highlight: 5-14]
 ```elixir
 defmodule Greenbox.ProductFetcherTest do
   use ExUnit.Case, async: true
   alias Greenbox.ProductFetcher
 
+  # Specifications into code
   describe "Given a request to fetch a list of products" do
     test "builds a list of products with id, capitalized name and price in dollar" do
       products = ProductFetcher.build()
+
       assert [
         %{id: "1234", name: "Blue ocean cream", price: _},
         %{id: "1235", name: "Sea soap", price: _}
       ] = products
     end
+```
 
+---
+
+```elixir
     test "builds a product with the price with dollar sign" do
       product =
         ProductFetcher.build()
@@ -297,8 +354,9 @@ end
 
 ---
 
-#### Product Fetcher
+# Product Fetcher - A new entity
 
+[.code-highlight: 2, 7, 12, 16, 17]
 ```elixir
 defmodule Greenbox.ProductFetcher do
   def build() do
@@ -307,10 +365,8 @@ defmodule Greenbox.ProductFetcher do
   end
 
   defp fetch_products do
-    [
-      %{id: "1234", name: "BLUE OCEAN CREAM", price: Enum.random(8000..10000)},
-      %{id: "1235", name: "SEA SOAP", price: Enum.random(5000..60000)}
-    ]
+    response = HTTPoison.get!("http://abcproducts.com/products")
+    Poison.decode!(response.body)
   end
 
   defp proccess_products(products) do
@@ -326,7 +382,7 @@ defmodule Greenbox.ProductFetcher do
 
 ---
 
-#### Listen to your code: What about those 2 new functions?
+## Listen to your code...
 
 ```elixir
   defp price_to_money(price) do
@@ -343,8 +399,9 @@ end
 
 ---
 
-#### Build an entity to handle product structure
+## Build an entity to handle product structure
 
+[.code-highlight: 5-15]
 ```elixir
 defmodule Greenbox.ProductTest do
   use ExUnit.Case, async: true
@@ -361,7 +418,11 @@ defmodule Greenbox.ProductTest do
       # Verify
       assert expected_product_name == "Blue soap"
     end
+```
 
+---
+
+```elixir
     test "transforms the price in cents to dollar" do
       # Setup
       product_price_in_cents = 1253
@@ -378,7 +439,7 @@ end
 
 ---
 
-#### Product Entity
+## Product Entity
 
 ```elixir
 defmodule Greenbox.Product do
@@ -402,22 +463,19 @@ end
 
 ---
 
-### Did you notice that we are hitting the Api every time we run our tests?
-
-
-### What should we do?
+## Did you notice that we are hitting the Api every time we run our tests?
 
 ---
 
-### Since we don't want to hit the api while testing we need to figure out another way to test the ProductFetcher.
+# we need to figure out another way to test the ProductFetcher.
 
 ---
 
-### Test Double, how to stub in Elixir?
+# Test Double, how to stub in Elixir?
 
 ---
 
-### SUT and collaborator(DOC)
+# SUT and collaborator (DOC)
 SUT: System Under Test
 DOC: Collaborator
 
@@ -425,17 +483,18 @@ DOC: Collaborator
 
 ---
 
-### Test Double
+# Test Double
 Is the object that substitutes the real DOC
+
 ![inline](test_double.jpg)
 
 ---
 
-Let's start by creating a fake client
+# Let's start by creating a fake client
 
 ---
 
-#### Fake client
+## Fake client
 
 ```elixir
 # test/support/fake_client.ex
@@ -451,26 +510,7 @@ end
 ```
 
 ---
-
-#### Configure the Fake Client
-[.code-highlight: 3, 9-11]
-
-```elixir
-# lib/product_fetcher.ex
-def build() do
-  client = get_client()
-
-  client.fetch_products()
-  |> proccess_products()
-end
-
-defp get_client do
-  Application.get_env(:greenbox, :abc_products_client)
-end
-```
-
----
-#### Configure the Fake Client
+## Configure the Fake Client
 [.code-highlight: 9, 15-17]
 
 ```elixir
@@ -498,13 +538,10 @@ end
 
 ```elixir
 # config/test.exs
-use Mix.Config
 
 config :greenbox,
   abc_products_client: Greenbox.FakeClient
-```
 
-```elixir
 # config/config.exs
 config :greenbox,
   abc_products_client: Greenbox.ProductClient
@@ -512,27 +549,30 @@ config :greenbox,
 
 ---
 
-#### The Real Model that will do the call to the external API
+## The Real Model that will do the call to the external API
 
 ```elixir
 defmodule Greenbox.ProductClient do
-
   def fetch_products do
-    # HTTPoison.get!("http://abcproducts.com")
+    response = url() |> HTTPoison.get!()
+    Poison.decode!(response.body)
+  end
+
+  defp url do
+    Application.get_env(:greenbox, :abc_products_url)
   end
 end
 ```
 ---
 
-### OR Stub requests with libraries
+## OR Stub requests with libraries
 - Bypass (https://github.com/PSPDFKit-labs/bypass)
 - Mox (https://github.com/plataformatec/mox)
 
-
 ---
 
-### What about Doctest?
-### Are they supposed to substitute tests?
+## What about Doctest?
+## Are they supposed to substitute tests?
 
 ---
 [.code-highlight: 4-9]
@@ -553,14 +593,15 @@ defmodule Greenbox.Product do
 
 ---
 
-### How tests can reflect **specifications** and help us to build **confident code**?
+## How tests can reflect **specifications** and help us to build **confident code**?
 
 ---
 
-#### Conclusion
+## Conclusion
 
+- Write clear test descriptions, the follows the specification
 - Always start outside-in
-- Think in each scenario will need to reproduce your specification (Test Pyramid)
+- Think in the Test Pyramid
 - Use stubs or build fake clients
 - Don't test behaviors
 - Abstract your code into Modules and made Unit Tests instead of testing behaviors
