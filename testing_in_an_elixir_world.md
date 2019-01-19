@@ -1,6 +1,6 @@
 slidenumbers: true
 
-# **Testing** in an Elixir world
+## **Testing** in an Elixir world
 ##### rafaelrochasilva@gmail.com
 ##### @RocRafael
 
@@ -23,19 +23,19 @@ slidenumbers: true
 
 ---
 
-# Reflections on **specifications** and software development
+### Reflections on **specifications** and software development
 
 ---
 
-## When we start a **user story**, we read the description, the acceptance criteria, and start coding, but….
+### When we start a **user story**, we read the description, the acceptance criteria, and start coding, but….
 
 ---
 
-## How tests can reflect **specifications** and help us to build **confident code**?
+### How tests can reflect **specifications** and help us to build **confident code**?
 
 ---
 
-## Are we bringing the specifications into code?
+### Are we bringing the specifications into code?
 
 ---
 
@@ -43,7 +43,7 @@ slidenumbers: true
 
 ---
 
-# Why testing?
+### Why testing?
 
 - Be **self-confident** about your deliverables
 
@@ -53,7 +53,7 @@ slidenumbers: true
 
 ---
 
-# What are the types of tests?
+### What are the types of tests?
 **Acceptance:**
 - Tests a functional requirement, usually by UI
 
@@ -65,20 +65,20 @@ slidenumbers: true
 
 ---
 
-# Test pyramid
+### Test pyramid
 
-![center](pyramid.jpg)
+![inline](pyramid.jpg)
 
 ---
 
-# What about Test Quality?
+### What about Test Quality?
 
 - Is the test verifying correct code behavior?
 - Is it easy to understand?
 
 ---
 
-# Firstly, let's get an example:
+### Firstly, let's get an example:
 
 As a User, I want to fetch products from abcprincing.com so that we can store the current name and price of a given product in memory.
 
@@ -105,7 +105,7 @@ Basically what we have to do are 3 tasks:
 
 ---
 
-# What is a Genserver?
+### What is a Genserver?
 
 
 “A GenServer is a process like any other Elixir process and it can be used to keep state, execute code asynchronously and so on."
@@ -190,54 +190,54 @@ end
 
 ---
 
-# How can I test GenServer or Behaviours in General?
+### How can I test GenServer?
 
 ---
 
-# Don't Test Elixir/OTP layers!!!
+### Be careful don't test your servers through the callbacks, other wise you are going to test the GenServer implementation.
 
 ---
 
-## What should I do?
-## Should I avoid creating tests?
+### What should I do?
+### Should I avoid creating tests?
 
 ---
 
-# Change your Design!
+### Change your Design!
 
 ---
 
-![](design.jpg)
+![inline](design.jpg)
 
 ---
 
-## That been said, lets refactory our code and let guide us
+### That been said, lets refactory our code and let guide us
 
 ---
 
-# But before start doing the test, I want to share some REALLY valuable concepts about Test.
+#### But before start doing the test, I want to share some REALLY valuable concepts about Test.
 
 ---
 
-# Clarity
+### Clarity
 
 A test is **easy** to understand when we can see the **cause and consequence** between the **phases** of the test.
 
 ---
 
-![](4phases.jpg)
+![inline](4phases.jpg)
 
 ---
 
-# Let's see how it will work for our example
+### Let's see how it will work for our example
 
 ---
 
-![](design.jpg)
+![inline](design.jpg)
 
 ---
 
-# Extract GenServer code to a new entity
+#### Extract GenServer code to a new entity
 
 ```elixir
  defp build_products() do
@@ -268,7 +268,7 @@ end
 
 ---
 
-# Let tests guide the development
+#### Let tests guide the development
 
 ```elixir
 defmodule Greenbox.ProductFetcherTest do
@@ -297,7 +297,7 @@ end
 
 ---
 
-# Product Fetcher
+#### Product Fetcher
 
 ```elixir
 defmodule Greenbox.ProductFetcher do
@@ -326,7 +326,7 @@ defmodule Greenbox.ProductFetcher do
 
 ---
 
-# Listen to your code: What about those 2 new functions?
+#### Listen to your code: What about those 2 new functions?
 
 ```elixir
   defp price_to_money(price) do
@@ -343,7 +343,8 @@ end
 
 ---
 
-# Build an entity to handle product structure
+#### Build an entity to handle product structure
+
 ```elixir
 defmodule Greenbox.ProductTest do
   use ExUnit.Case, async: true
@@ -377,7 +378,8 @@ end
 
 ---
 
-# Product Entity
+#### Product Entity
+
 ```elixir
 defmodule Greenbox.Product do
   defstruct [:id, :name, :price]
@@ -396,36 +398,36 @@ end
 
 ---
 
-![](design.jpg)
+![inline](design.jpg)
 
 ---
 
-# Did you notice that we are hitting the Api every time we run our tests?
+### Did you notice that we are hitting the Api every time we run our tests?
 
 
-# What should we do?
-
----
-
-# Since we don't want to hit the api while testing we need to figure out another way to test the ProductFetcher.
+### What should we do?
 
 ---
 
-# Test Double, how to mock in Elixir?
+### Since we don't want to hit the api while testing we need to figure out another way to test the ProductFetcher.
 
 ---
 
-# SUT and collaborator(DOC)
+### Test Double, how to stub in Elixir?
+
+---
+
+### SUT and collaborator(DOC)
 SUT: System Under Test
 DOC: Collaborator
 
-![](sut_doc.jpg)
+![inline](sut_doc.jpg)
 
 ---
 
-# Test Double
+### Test Double
 Is the object that substitutes the real DOC
-![](test_double.jpg)
+![inline](test_double.jpg)
 
 ---
 
@@ -433,7 +435,7 @@ Let's start by creating a fake client
 
 ---
 
-# Fake client
+#### Fake client
 
 ```elixir
 # test/support/fake_client.ex
@@ -450,7 +452,7 @@ end
 
 ---
 
-# Configure the Fake Client
+#### Configure the Fake Client
 [.code-highlight: 3, 9-11]
 
 ```elixir
@@ -468,7 +470,7 @@ end
 ```
 
 ---
-# Configure the Fake Client
+#### Configure the Fake Client
 [.code-highlight: 9, 15-17]
 
 ```elixir
@@ -510,7 +512,7 @@ config :greenbox,
 
 ---
 
-# The Real Model that will do the call to the external API
+#### The Real Model that will do the call to the external API
 
 ```elixir
 defmodule Greenbox.ProductClient do
@@ -522,15 +524,15 @@ end
 ```
 ---
 
-# OR Stub requests with libraries
+### OR Stub requests with libraries
 - Bypass (https://github.com/PSPDFKit-labs/bypass)
 - Mox (https://github.com/plataformatec/mox)
 
 
 ---
 
-# What about Doctest?
-# Are they supposed to substitute tests?
+### What about Doctest?
+### Are they supposed to substitute tests?
 
 ---
 [.code-highlight: 4-9]
@@ -551,17 +553,15 @@ defmodule Greenbox.Product do
 
 ---
 
-How tests can reflect **specifications**
-and help us to build
-**confident code**?
+### How tests can reflect **specifications** and help us to build **confident code**?
 
 ---
 
-# Conclusion
+#### Conclusion
 
 - Always start outside-in
 - Think in each scenario will need to reproduce your specification (Test Pyramid)
-- Use mocks or build fake clients
+- Use stubs or build fake clients
 - Don't test behaviors
 - Abstract your code into Modules and made Unit Tests instead of testing behaviors
 
@@ -574,3 +574,7 @@ https://github.com/rafaelrochasilva/greenbox
 ---
 
 References:
+
+https://github.com/plataformatec/mox
+https://github.com/PSPDFKit-labs/bypass
+https://github.com/keathley/wallaby
