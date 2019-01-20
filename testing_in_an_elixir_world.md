@@ -1,37 +1,34 @@
 slidenumbers: true
 
-## **Testing** in an Elixir world
-##### rafaelrochasilva@gmail.com
+## Testing in an Elixir world
+##### *rafaelrochasilva@gmail.com*
 ##### @RocRafael
 
 ---
 
 # **Rafael Rocha**
-- Full Stack developer at Plataformatec / The RealReal
-- Master degree in Electrical Engineering
-- Bachelor of Computer Science
-- Father & Cooker
+- Full Stack developer at *Plataformatec / The RealReal*
+- Master degree in *Electrical Engineering*
+- Bachelor of *Computer Science*
+- Father :boy::girl::heart: & Cooker :meat_on_bone::spaghetti:
 
 ![right](rafael_rocha.jpg)
 
 ---
 # Agenda
 
-- Specifications and software development
-- Base test concepts
-- Testing with Elixir
+- **Specifications** and software development
+- **Base test** concepts
+- Testing with **Elixir**
 
 ---
 
-## When we start a **user story**, read the description, the acceptance criteria, and start coding
+## When we start a *user story*, read the description, the acceptance criteria, and *start coding*
 
 ---
 
-# But…
-
----
-
-# Are you bringing the specifications into code?
+# *But…* <br>
+Are you bringing the *specifications* into code?
 ![](specs.jpg)
 
 ---
@@ -45,34 +42,40 @@ slidenumbers: true
 
 ---
 
-# Before **answering** those questions
+# Before *answering* those questions we need some *base testing* concepts
 
 ---
 
-# we need some **BASE TESTING concepts**
+# Why *testing*?
+[x] Be **self-confident**
+
+![right 80%](confident.jpg)
 
 ---
 
-# Why __testing__?
+# Why *testing*?
+[x] Be **self-confident**
+[x] Organize thoghts
+
+![right 140%](thoughts.jpg)
 
 ---
 
-# Be **self-confident**
-![](confident.jpg)
+# Why *testing*?
+[x] Be **self-confident**
+[x] Organize thoghts
+[x] Keep the **costs low**
+
+![right 135%](low_costs.jpg)
 
 ---
+# Why *testing*?
+[x] Be **self-confident**
+[x] Organize thoghts
+[x] Keep the **costs low**
+[x] Bring **quality** to the code
 
-# Organize thoghts
-![](thoughts.jpg)
-
----
-
-# Keep the **costs low**
-![](low_costs.jpg)
-
----
-
-![](quality.jpg)
+![right 90%](quality.jpg)
 
 ---
 
@@ -81,9 +84,11 @@ slidenumbers: true
 ---
 
 # Acceptance:
-- Generally expressed as a usage scenario.
+- Expressed as a usage scenario.
 - End to end
 - Close to the UI
+
+![right 200%](acceptance.png)
 
 ---
 
@@ -91,10 +96,14 @@ slidenumbers: true
 - Test between acceptance and unit
 - Test the behavior of 2 or more entities
 
+![left 150%](integration.png)
+
 ---
 
 # Unit:
 - Tests the behavior of 1 entity
+
+![right 310%](unit.jpg)
 
 ---
 
@@ -104,23 +113,24 @@ slidenumbers: true
 
 ---
 
-## Lets practice?
+## Falar da app que vamos criar
+## Lets practice MUDAR?
 
 As a User, I want to fetch products from abcprincing.com so that we can store the current name and price of a given product in memory.
 
 ---
 
 ## Acceptance Criteria:
-- All products name and price should be fetched and stored in memory.
-- The product name should be capitalized
+- All *products name* and *price* should be fetched and stored in memory.
+- The product name should be *capitalized*
 
 ---
 
 ## Basically what we have to do:
 
-1) Fetch Products from the API
-2) Build a structure with id, capitalize name and price
-3) Consume the data in memory
+1) *Fetch Products* from the API
+2) Build a *structure* with id, capitalize name and price
+3) Consume the data *in memory*
 
 ---
 
@@ -129,7 +139,7 @@ As a User, I want to fetch products from abcprincing.com so that we can store th
 
 ---
 
-## To keep the data in memory we will use Genserver.
+## To *keep* the data *in memory* we will use *Genserver*.
 
 ---
 
@@ -137,6 +147,7 @@ As a User, I want to fetch products from abcprincing.com so that we can store th
 
 
 “A GenServer is a process like any other Elixir process and it can be used to keep state, execute code asynchronously and so on."
+-- Elixir Documentation
 
 ---
 
@@ -210,7 +221,6 @@ defmodule GreenBox.PriceUpdater do
       }
     end)
   end
-
 end
 ```
 
@@ -220,19 +230,11 @@ end
 
 ---
 
-# Be careful to not test your servers through the callbacks
+# Be careful to *not test* your servers through the *callbacks* <br> other wise you are going to test the GenServer implementation.
 
 ---
 
-# other wise you are going to test the GenServer implementation.
-
----
-
-# What should I do?
-
----
-
-# Should I avoid creating tests?
+# What should I do? <br> Should I avoid creating tests?
 
 ---
 
@@ -244,24 +246,17 @@ end
 
 ---
 
-# That been said, lets refactory our code
-
----
-# and let the tests guide us
+# That been said, lets refactory our code <br> and *let the tests guide us*
 
 ---
 
-# But before start doing the test
-
----
-
-# I want to share some REALLY valuable concepts about Test.
+# But before start doing the test <br> I want to share some really *valuable concepts* about Test
 
 ---
 
 # Clarity
 
-A test is **easy** to understand when we can see the **cause and consequence** between the **phases** of the test.
+A test is __easy__ to understand when we can see the __cause and consequence__ between the __phases__ of the test.
 
 ---
 
@@ -269,7 +264,7 @@ A test is **easy** to understand when we can see the **cause and consequence** b
 
 ---
 
-# Let's see how it will work for our example
+# Let's see *how it* will *work* for our example
 
 ---
 
@@ -307,7 +302,7 @@ end
 
 ---
 
-## Let tests guide the development
+#### Let tests guide the development
 
 [.code-highlight: 5-14]
 ```elixir
@@ -343,7 +338,7 @@ end
 
 ---
 
-# Product Fetcher - A new entity
+#### Product Fetcher - A new entity
 
 [.code-highlight: 2, 7, 12, 16, 17]
 ```elixir
@@ -371,7 +366,7 @@ defmodule Greenbox.ProductFetcher do
 
 ---
 
-## Listen to your code...
+#### Listen to your code...
 
 ```elixir
   defp price_to_money(price) do
@@ -388,7 +383,7 @@ end
 
 ---
 
-## Build an entity to handle product structure
+#### Build an entity to handle product structure
 
 [.code-highlight: 5-15]
 ```elixir
@@ -428,7 +423,7 @@ end
 
 ---
 
-## Product Entity
+#### Product Entity
 
 ```elixir
 defmodule Greenbox.Product do
@@ -452,11 +447,11 @@ end
 
 ---
 
-## Did you notice that we are hitting the Api every time we run our tests?
+## Did you notice that we are *hitting the Api* every time we run our tests?
 
 ---
 
-# we need to figure out another way to test the ProductFetcher.
+## Find another way to test the ProductFetcher.
 
 ---
 
@@ -582,18 +577,18 @@ defmodule Greenbox.Product do
 
 ---
 
-## How tests can reflect **specifications** and help us to build **confident code**?
+## How tests can reflect *specifications* and help us to build *confident code*?
 
 ---
 
 ## Conclusion
 
-- Write clear test descriptions, the follows the specification
-- Always start outside-in
-- Think in the Test Pyramid
-- Use stubs or build fake clients
+- Write clear *test descriptions*, the follows the specification
+- Always start *outside-in*
+- Think in the Test *Pyramid*
+- Use *stubs* or build fake clients
 - Don't test behaviors
-- Abstract your code into Modules and made Unit Tests instead of testing behaviors
+- *Abstract* your code into Modules and made Unit Tests instead of testing behaviors
 
 ---
 
