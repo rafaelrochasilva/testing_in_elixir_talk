@@ -101,8 +101,10 @@ slidenumbers: true
 
 # Unit:
 - Tests the behavior of 1 entity
-- Fast
+- Earlier detect faults
+- Run Fast
 - Internal Quality
+- Easier to fix fauls
 
 ![right 310%](unit.jpg)
 
@@ -642,7 +644,7 @@ defmodule Greenbox.Product do
 **Conclusions**
 
 - Write clear _**test descriptions**_
-- Follow the specifications
+- Follow the _**specifications**_
 - Always start _**outside-in**_
 - Think in the Test _**Pyramid**_
 - Use _**stubs**_ or build fake clients
