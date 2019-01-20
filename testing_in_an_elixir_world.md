@@ -28,17 +28,14 @@ slidenumbers: true
 ---
 
 # *But…* <br>
-Are you bringing the *specifications* into code?
+# Are you bringing the *specifications* into code?
+
 ![](specs.jpg)
 
 ---
 
 # Are you confident about your deliverables?
 ![inline](bug.jpg)
-
----
-
-# How to bring the **specifications** into code?
 
 ---
 
@@ -87,6 +84,8 @@ Are you bringing the *specifications* into code?
 - Expressed as a usage scenario.
 - End to end
 - Close to the UI
+- Slow
+- External Quality
 
 ![right 200%](acceptance.png)
 
@@ -102,6 +101,8 @@ Are you bringing the *specifications* into code?
 
 # Unit:
 - Tests the behavior of 1 entity
+- Fast
+- Internal Quality
 
 ![right 310%](unit.jpg)
 
@@ -113,16 +114,40 @@ Are you bringing the *specifications* into code?
 
 ---
 
-## Falar da app que vamos criar
-## Lets practice MUDAR?
+# Clarity
 
-As a User, I want to fetch products from abcprincing.com so that we can store the current name and price of a given product in memory.
+A test is _**easy**_ to understand <br>when we can see the _**cause and consequence**_<br>between the __phases__ of the test.
+
+---
+
+# Clarity
+
+![inline](4phases.jpg)
+
+---
+
+## Imagine that we have an app called *Greenbox*
+
+---
+
+# Greenbox
+
+### Online store that sells <br> natural organic beauty products, <br> where users can choose a diffent variaty of <br> products and mount its own box.
+
+- We have a stock that changes its prices every <br>*__10 minutes__*, due to our crazy promotions.
+
+---
+
+## Lets practice?
+
+As a User, I want to fetch products from abcdprincing.com so that we can store the current name and price of a given product in memory.
 
 ---
 
 ## Acceptance Criteria:
-- All *products name* and *price* should be fetched and stored in memory.
-- The product name should be *capitalized*
+- All _**id**_, _**products name**_ and _**price**_ should be fetched and stored in memory.
+- The product name should be _**capitalized**_
+- The price should be in a dollar format, like: _**$12.50**_
 
 ---
 
@@ -135,7 +160,21 @@ As a User, I want to fetch products from abcprincing.com so that we can store th
 ---
 
 # Let's use an Outside-in approach
-![](outsidein.jpg)
+![220%](outsidein.jpg)
+
+---
+
+## What is the most outside layer of our tasks?
+[] *Fetch Products* from the API
+[] Build a *structure* with id, capitalize name and price
+[] Consume the data *in memory*
+
+---
+
+## What is the most outside layer of our tasks?
+[] Fetch Products from the API
+[] Build a structure with id, capitalize name and price
+_**[1] Consume the data in memory**_
 
 ---
 
@@ -145,24 +184,23 @@ As a User, I want to fetch products from abcprincing.com so that we can store th
 
 ## What is a Genserver?
 
-
 “A GenServer is a process like any other Elixir process and it can be used to keep state, execute code asynchronously and so on."
 -- Elixir Documentation
 
 ---
 
 ```elixir
+# [1] Consume the data in memory
+
 defmodule GreenBox.PriceUpdater do
   use GenServer
-  @time_to_consume 10000
+  @time_to_consume 10000 * 60 # 10 minutes
 
   def start_link do
     GenServer.start_link(__MODULE__, [])
   end
 
-  def init(_) do
-    state = build_products()
-    schedule_work()
+  def init(state) do
     {:ok, state}
   end
 
@@ -174,53 +212,115 @@ defmodule GreenBox.PriceUpdater do
 ---
 
 ```elixir
-  @doc """
-  Run the job and reschedule it to run again after some time.
-  """
-  def handle_info(:get_products, _state) do
-    products = build_products()
+# [1] Consume the data in memory
 
+def list_products(pid) do
+  GenServer.call(pid, :list_products)
+end
+
+def handle_call(:list_products, _, state) do
+  {:reply, state, state}
+end
+```
+
+---
+
+## What is the most outside layer of our tasks?
+_**[2] Fetch Products from the API**_
+[] Build a structure with id, capitalize name and price
+[1] Consume the data in memory
+
+---
+
+[.code-highlight: 10-11]
+```elixir
+# [2] Fetch Products from the API
+
+defmodule GreenBox.PriceUpdater do
+  use GenServer
+  @time_to_consume 10000
+
+  def start_link do
+    GenServer.start_link(__MODULE__, [])
+  end
+
+  def init(_) do
+    state = fetch_products()
     schedule_work()
-    {:noreply, products}
-  end
-
-  def handle_call(:list_products, _, state) do
-    {:reply, state, state}
-  end
-
-  defp schedule_work() do
-    Process.send_after(self(), :get_products, @time_to_consume)
+    {:ok, state}
   end
 ```
 
 ---
 
 ```elixir
- defp build_products() do
-    fetch_products()
-    |> proccess_products
-  end
+# [2] Fetch Products from the API
 
-  defp fetch_products do
-    response = HTTPoison.get!("http://abcproducts.com/products")
-    Poison.decode!(response.body)
-  end
+@doc """
+Run the job and reschedule it to run again after some time.
+"""
+def handle_info(:get_products, _state) do
+  products = fetch_products()
+  schedule_work()
+
+  {:noreply, products}
+end
+
+defp fetch_products do
+  response = HTTPoison.get!("http://abcproducts.com/products")
+  Poison.decode!(response.body)
+end
+
+defp schedule_work() do
+  Process.send_after(self(), :get_products, @time_to_consume)
+end
+```
+
+---
+
+## What is the most outside layer of our tasks?
+[2] Fetch Products from the API
+_**[3] Build a structure with id, capitalize name and price**_
+[1] Consume the data in memory
+
+---
+
+
+```elixir
+# [3] Build a structure with id, capitalize name and price
+
+def init(_) do
+  state = build_products()
+  schedule_work()
+  {:ok, state}
+end
+
+defp build_products() do
+  fetch_products()
+  |> proccess_products
+end
 ```
 
 ---
 
 ```elixir
-  defp proccess_products(products) do
-    Enum.map(products, fn %{id: id, name: name, price: price} ->
-      new_name = name |> String.downcase() |> String.capitalize()
-      new_price = "$#{price/100}"
-      %{
-        id: id,
-        name: new_name,
-        price: new_price
-      }
-    end)
-  end
+# [3] Build a structure with id, capitalize name and price
+
+defp fetch_products do
+  response = HTTPoison.get!("http://abcproducts.com/products")
+  Poison.decode!(response.body)
+end
+
+defp proccess_products(products) do
+  Enum.map(products, fn %{id: id, name: name, price: price} ->
+    new_name = name |> String.downcase() |> String.capitalize()
+    new_price = "$#{price/100}"
+    %{
+      id: id,
+      name: new_name,
+      price: new_price
+    }
+  end)
 end
 ```
 
@@ -230,82 +330,27 @@ end
 
 ---
 
-# Be careful to *not test* your servers through the *callbacks* <br> other wise you are going to test the GenServer implementation.
+## Be careful to *not test* your servers through the *callbacks* <br> other wise you are going to test the GenServer implementation.
 
 ---
 
-# What should I do? <br> Should I avoid creating tests?
+# Change your Design!
 
 ---
 
-# Listen to your code and Change your Design!
-
----
-
+# Fetch Products Architecture
 ![inline](design.jpg)
 
 ---
 
-# That been said, lets refactory our code <br> and *let the tests guide us*
+## Lets build an *integration test* to guide the development
 
 ---
 
-# But before start doing the test <br> I want to share some really *valuable concepts* about Test
-
----
-
-# Clarity
-
-A test is __easy__ to understand when we can see the __cause and consequence__ between the __phases__ of the test.
-
----
-
-![inline](4phases.jpg)
-
----
-
-# Let's see *how it* will *work* for our example
-
----
-
-## Extract GenServer code to a new entity
-
+[.code-highlight: 7-16]
 ```elixir
-# Move this code to a new entity
- defp build_products() do
-    fetch_products() |> proccess_products()
-  end
+# Lets build an INTEGRATION TEST
 
-  defp proccess_products(products) do
-    Enum.map(products, fn %{id: id, name: name, price: price} ->
-      new_name = name |> String.downcase() |> String.capitalize()
-      new_price = "$#{price/100}"
-      %{
-        id: id,
-        name: new_name,
-        price: new_price
-      }
-    end)
-  end
-```
-
----
-
-```elixir
-# Move this code to a new entity
-  defp fetch_products do
-    response = HTTPoison.get!("http://abcproducts.com/products")
-    Poison.decode!(response.body)
-  end
-end
-```
-
----
-
-#### Let tests guide the development
-
-[.code-highlight: 5-14]
-```elixir
 defmodule Greenbox.ProductFetcherTest do
   use ExUnit.Case, async: true
   alias Greenbox.ProductFetcher
@@ -325,20 +370,20 @@ defmodule Greenbox.ProductFetcherTest do
 ---
 
 ```elixir
-    test "builds a product with the price with dollar sign" do
-      product =
-        ProductFetcher.build()
-        |> List.first()
+# Let tests guide the development
 
-      assert Regex.match?(~r/\$\d+\.\d+/, product.price)
-    end
-  end
+test "builds a product with the price with dollar sign" do
+  product =
+    ProductFetcher.build()
+    |> List.first()
+
+  assert Regex.match?(~r(\$\d+\.\d+), product.price)
 end
 ```
 
 ---
 
-#### Product Fetcher - A new entity
+Product Fetcher - A new entity
 
 [.code-highlight: 2, 7, 12, 16, 17]
 ```elixir
@@ -363,27 +408,41 @@ defmodule Greenbox.ProductFetcher do
     end)
   end
 ```
-
 ---
 
-#### Listen to your code...
+Listen to your code...
 
 ```elixir
-  defp price_to_money(price) do
-    "$#{price / 100}"
-  end
-
-  defp capitalize_name(name) do
-    name
-    |> String.downcase()
-    |> String.capitalize()
-  end
+defp proccess_products(products) do
+  Enum.map(products, fn %{id: id, name: name, price: price} ->
+    %{
+      id: id,
+      name: capitalize_name(name),
+      price: price_to_money(price)
+    }
+  end)
 end
 ```
 
 ---
 
-#### Build an entity to handle product structure
+```elixir
+# Listen to your code
+
+defp price_to_money(price) do
+  "$#{price / 100}"
+end
+
+defp capitalize_name(name) do
+  name
+  |> String.downcase()
+  |> String.capitalize()
+end
+```
+
+---
+
+Build the _**unit tests**_ to handle product structure
 
 [.code-highlight: 5-15]
 ```elixir
@@ -406,7 +465,11 @@ defmodule Greenbox.ProductTest do
 
 ---
 
+[.code-highlight: 3-12]
+
 ```elixir
+# Build the unit tests to handle product structure
+
     test "transforms the price in cents to dollar" do
       # Setup
       product_price_in_cents = 1253
@@ -423,7 +486,7 @@ end
 
 ---
 
-#### Product Entity
+Product Entity
 
 ```elixir
 defmodule Greenbox.Product do
@@ -443,6 +506,7 @@ end
 
 ---
 
+# Fetch Products Architecture
 ![inline](design.jpg)
 
 ---
@@ -451,34 +515,24 @@ end
 
 ---
 
-## Find another way to test the ProductFetcher.
-
----
-
 # Test Double, how to stub in Elixir?
 
 ---
 
-# SUT and collaborator (DOC)
+# Test Double
 SUT: System Under Test
 DOC: Collaborator
-
-![inline](sut_doc.jpg)
-
----
-
-# Test Double
-Is the object that substitutes the real DOC
+Double: Is the object that substitutes the real DOC
 
 ![inline](test_double.jpg)
 
 ---
 
-# Let's start by creating a fake client
+# Let's start by create our Double
 
 ---
 
-## Fake client
+Fake client
 
 ```elixir
 # test/support/fake_client.ex
@@ -494,7 +548,9 @@ end
 ```
 
 ---
-## Configure the Fake Client
+
+Configure the Fake Client
+
 [.code-highlight: 9, 15-17]
 
 ```elixir
@@ -533,7 +589,7 @@ config :greenbox,
 
 ---
 
-## The Real Model that will do the call to the external API
+Call to the external API
 
 ```elixir
 defmodule Greenbox.ProductClient do
@@ -561,6 +617,8 @@ end
 ---
 [.code-highlight: 4-9]
 ```elixir
+# Doctest
+
 defmodule Greenbox.Product do
   defstruct [:id, :name, :price]
 
@@ -581,14 +639,15 @@ defmodule Greenbox.Product do
 
 ---
 
-## Conclusion
+**Conclusions**
 
-- Write clear *test descriptions*, the follows the specification
-- Always start *outside-in*
-- Think in the Test *Pyramid*
-- Use *stubs* or build fake clients
-- Don't test behaviors
-- *Abstract* your code into Modules and made Unit Tests instead of testing behaviors
+- Write clear _**test descriptions**_
+- Follow the specifications
+- Always start _**outside-in**_
+- Think in the Test _**Pyramid**_
+- Use _**stubs**_ or build fake clients
+- _**Don't test**_ behaviors callbacks
+- Abstract your code into _**modules**_
 
 ---
 
