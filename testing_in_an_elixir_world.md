@@ -15,11 +15,21 @@ slidenumbers: true
 ![right](rafael_rocha.jpg)
 
 ---
-# Agenda
+*Agenda*
 
-- **Specifications** and software development
-- **Base test** concepts
-- Testing with **Elixir**
+```sh
+- Specifications and software development
+- Why testing?
+- Base test concepts
+  - Types of test
+  - Test Pyramid
+  - Test Clarity
+- Use Case with **Elixir**
+  - Ouside-in approach
+  - Refactoring code with tests
+  - Test double with fake clients
+  - Doctests
+```
 
 ---
 
