@@ -1,5 +1,3 @@
-slidenumbers: true
-
 ## Testing in an Elixir world
 ##### *rafaelrochasilva@gmail.com*
 ##### @RocRafael
@@ -62,7 +60,7 @@ slidenumbers: true
 
 # Why *testing*?
 [x] Be **self-confident**
-[x] Organize thoghts
+[x] Organize thoughts
 
 ![right 140%](thoughts.jpg)
 
@@ -78,7 +76,7 @@ slidenumbers: true
 ---
 # Why *testing*?
 [x] Be **self-confident**
-[x] Organize thoghts
+[x] Organize thoughts
 [x] Keep the **costs low**
 [x] Bring **quality** to the code
 
@@ -90,8 +88,14 @@ slidenumbers: true
 
 ---
 
+# Test pyramid
+
+![inline](pyramid.jpg)
+
+---
+
 # Acceptance:
-- Expressed as a usage scenario.
+- Express a usage scenario.
 - End to end
 - Close to the UI
 - Slow
@@ -110,31 +114,13 @@ slidenumbers: true
 ---
 
 # Unit:
-- Tests the behavior of 1 entity
-- Earlier detect faults
-- Run Fast
-- Internal Quality
-- Easier to fix fauls
+- Tests the behavior of one entity
+- Earlier detect mistakes
+- Run Faster
+- Guarantee internal quality
+- Easier to fix mistakes
 
 ![right 310%](unit.jpg)
-
----
-
-# Test pyramid
-
-![inline](pyramid.jpg)
-
----
-
-# Clarity
-
-A test is _**easy**_ to understand <br>when we can see the _**cause and consequence**_<br>between the __phases__ of the test.
-
----
-
-# Clarity
-
-![inline](4phases.jpg)
 
 ---
 
@@ -144,20 +130,20 @@ A test is _**easy**_ to understand <br>when we can see the _**cause and conseque
 
 # Greenbox
 
-### Online store that sells <br> natural organic beauty products, <br> where users can choose a diffent variaty of <br> products and mount its own box.
+### Online store that sells <br> organic beauty products, <br> where users can choose a diffent variaty of <br> products and build its own box.
 
 - We have a stock that changes its prices every <br>*__10 minutes__*, due to our crazy promotions.
 
 ---
 
-## Lets practice?
+## Let's practice?
 
-As a User, I want to fetch products from abcdprincing.com so that we can store the current name and price of a given product in memory.
+As a User, I want to fetch products from abcdpricing.com so that we can store the current name and price of a given product.
 
 ---
 
 ## Acceptance Criteria:
-- All _**id**_, _**products name**_ and _**price**_ should be fetched and stored in memory.
+- All _**id**_, _**products name**_ and _**price**_ should be fetched time to time.
 - The product name should be _**capitalized**_
 - The price should be in a dollar format, like: _**$12.50**_
 
@@ -166,8 +152,8 @@ As a User, I want to fetch products from abcdprincing.com so that we can store t
 ## Basically what we have to do:
 
 1) *Fetch Products* from the API
-2) Build a *structure* with id, capitalize name and price
-3) Consume the data *in memory*
+2) Build a *structure* with id, capitalized name and price
+3) Consume the data
 
 ---
 
@@ -176,37 +162,36 @@ As a User, I want to fetch products from abcdprincing.com so that we can store t
 
 ---
 
-## What is the most outside layer of our tasks?
+## What is the main outside layer of our tasks?
 [] *Fetch Products* from the API
-[] Build a *structure* with id, capitalize name and price
-[] Consume the data *in memory*
+[] Build a *structure* with id, capitalized name and price
+[] Consume the data
 
 ---
 
-## What is the most outside layer of our tasks?
+## What is the main outside layer of our tasks?
 [] Fetch Products from the API
-[] Build a structure with id, capitalize name and price
-_**[1] Consume the data in memory**_
+[] Build a structure with id, capitalized name and price
+_**[1] Consume the data**_
 
 ---
 
-## To *keep* the data *in memory* we will use *Genserver*.
+## To fetch the products time to time, we are going to use a *GenServer*
 
 ---
 
-## What is a Genserver?
+## What is a GenServer?
 
-“A GenServer is a process like any other Elixir process and it can be used to keep state, execute code asynchronously and so on."
+“A GenServer is a process like any other process in Elixir and it can be used to keep state, execute code asynchronously and so on."
 -- Elixir Documentation
 
 ---
 
 ```elixir
-# [1] Consume the data in memory
+# [1] Consume the data
 
 defmodule GreenBox.PriceUpdater do
   use GenServer
-  @time_to_consume 10000 * 60 # 10 minutes
 
   def start_link do
     GenServer.start_link(__MODULE__, [])
@@ -224,7 +209,7 @@ defmodule GreenBox.PriceUpdater do
 ---
 
 ```elixir
-# [1] Consume the data in memory
+# [1] Consume the data
 
 def list_products(pid) do
   GenServer.call(pid, :list_products)
@@ -237,20 +222,19 @@ end
 
 ---
 
-## What is the most outside layer of our tasks?
+## What is the main outside layer of our tasks?
 _**[2] Fetch Products from the API**_
-[] Build a structure with id, capitalize name and price
-[1] Consume the data in memory
+[] Build a structure with id, capitalized name and price
+[1] Consume the data
 
 ---
 
-[.code-highlight: 10-11]
+[.code-highlight: 5, 11-15]
 ```elixir
 # [2] Fetch Products from the API
 
 defmodule GreenBox.PriceUpdater do
   use GenServer
-  @time_to_consume 10000
 
   def start_link do
     GenServer.start_link(__MODULE__, [])
@@ -279,27 +263,28 @@ def handle_info(:get_products, _state) do
 end
 
 defp fetch_products do
-  response = HTTPoison.get!("http://abcproducts.com/products")
+  response = HTTPoison.get!("http://abcdpricing.com/products")
   Poison.decode!(response.body)
 end
 
-defp schedule_work() do
+@time_to_consume 10000 * 60 # 10 minutes
+defp schedule_work do
   Process.send_after(self(), :get_products, @time_to_consume)
 end
 ```
 
 ---
 
-## What is the most outside layer of our tasks?
+## What is the main outside layer of our tasks?
 [2] Fetch Products from the API
-_**[3] Build a structure with id, capitalize name and price**_
-[1] Consume the data in memory
+_**[3] Build a structure with id, capitalized name and price**_
+[1] Consume the data
 
 ---
 
 
 ```elixir
-# [3] Build a structure with id, capitalize name and price
+# [3] Build a structure with id, capitalized name and price
 
 def init(_) do
   state = build_products()
@@ -307,25 +292,25 @@ def init(_) do
   {:ok, state}
 end
 
-defp build_products() do
+defp build_products do
   fetch_products()
-  |> proccess_products
+  |> process_products()
 end
 ```
 
 ---
 
 ```elixir
-# [3] Build a structure with id, capitalize name and price
+# [3] Build a structure with id, capitalized name and price
 
 defp fetch_products do
-  response = HTTPoison.get!("http://abcproducts.com/products")
+  response = HTTPoison.get!("http://abcdpricing.com/products")
   Poison.decode!(response.body)
 end
 
-defp proccess_products(products) do
+defp process_products(products) do
   Enum.map(products, fn %{id: id, name: name, price: price} ->
-    new_name = name |> String.downcase() |> String.capitalize()
+    new_name = String.capitalize(name)
     new_price = "$#{price/100}"
     %{
       id: id,
@@ -338,11 +323,11 @@ end
 
 ---
 
-# How can I test GenServer?
+# How can I test a GenServer?
 
 ---
 
-## Be careful to *not test* your servers through the *callbacks* <br> other wise you are going to test the GenServer implementation.
+## Be careful to *not test* your servers through the *callbacks* <br> otherwise you are going to test the GenServer implementation.
 
 ---
 
@@ -355,13 +340,13 @@ end
 
 ---
 
-## Lets build an *integration test* to guide the development
+## Let's build an *integration test* to guide the development
 
 ---
 
 [.code-highlight: 7-16]
 ```elixir
-# Lets build an INTEGRATION TEST
+# Let's build an INTEGRATION TEST
 
 defmodule Greenbox.ProductFetcherTest do
   use ExUnit.Case, async: true
@@ -389,6 +374,7 @@ test "builds a product with the price with dollar sign" do
     ProductFetcher.build()
     |> List.first()
 
+  # Expected format "$12.45"
   assert Regex.match?(~r(\$\d+\.\d+), product.price)
 end
 ```
@@ -397,20 +383,19 @@ end
 
 Product Fetcher - A new entity
 
-[.code-highlight: 2, 7, 12, 16, 17]
 ```elixir
 defmodule Greenbox.ProductFetcher do
-  def build() do
+  def build do
     fetch_products()
-    |> proccess_products()
+    |> process_products()
   end
 
   defp fetch_products do
-    response = HTTPoison.get!("http://abcproducts.com/products")
+    response = HTTPoison.get!("http://abcdpricing.com/products")
     Poison.decode!(response.body)
   end
 
-  defp proccess_products(products) do
+  defp process_products(products) do
     Enum.map(products, fn %{id: id, name: name, price: price} ->
       %{
         id: id,
@@ -420,12 +405,13 @@ defmodule Greenbox.ProductFetcher do
     end)
   end
 ```
+
 ---
 
 Listen to your code...
 
 ```elixir
-defp proccess_products(products) do
+defp process_products(products) do
   Enum.map(products, fn %{id: id, name: name, price: price} ->
     %{
       id: id,
@@ -446,9 +432,7 @@ defp price_to_money(price) do
 end
 
 defp capitalize_name(name) do
-  name
-  |> String.downcase()
-  |> String.capitalize()
+  String.capitalize(name)
 end
 ```
 
@@ -468,10 +452,10 @@ defmodule Greenbox.ProductTest do
       product_name = "BLUE SOAP"
 
       # Exercise
-      expected_product_name = Product.capitalize_name(product_name)
+      capitalized_name = Product.capitalize_name(product_name)
 
       # Verify
-      assert expected_product_name == "Blue soap"
+      assert capitalized_name == "Blue soap"
     end
 ```
 
@@ -487,10 +471,10 @@ defmodule Greenbox.ProductTest do
       product_price_in_cents = 1253
 
       # Exercise
-      expected_product_name = Product.price_to_money(product_price_in_cents)
+      product_price = Product.price_to_money(product_price_in_cents)
 
       # Verify
-      assert expected_product_name == "$12.53"
+      assert product_price == "$12.53"
     end
   end
 end
@@ -509,9 +493,23 @@ defmodule Greenbox.Product do
   end
 
   def capitalize_name(name) do
-    name
-    |> String.downcase()
-    |> String.capitalize()
+    String.capitalize(name)
+  end
+end
+```
+
+---
+And finally, build a client to call the external API
+
+```elixir
+defmodule Greenbox.ProductClient do
+  def fetch_products do
+    response = url() |> HTTPoison.get!()
+    Poison.decode!(response.body)
+  end
+
+  defp url do
+    Application.get_env(:greenbox, :abc_products_url)
   end
 end
 ```
@@ -524,6 +522,25 @@ end
 ---
 
 ## Did you notice that we are *hitting the Api* every time we run our tests?
+
+---
+
+Call to the external API
+
+[.code-highlight: 2-5]
+
+```elixir
+defmodule Greenbox.ProductClient do
+  def fetch_products do
+    response = url() |> HTTPoison.get!()
+    Poison.decode!(response.body)
+  end
+
+  defp url do
+    Application.get_env(:greenbox, :abc_products_url)
+  end
+end
+```
 
 ---
 
@@ -540,7 +557,7 @@ Double: Is the object that substitutes the real DOC
 
 ---
 
-# Let's start by create our Double
+# Let's start creating our Double
 
 ---
 
@@ -589,11 +606,6 @@ end
 ---
 
 ```elixir
-# config/test.exs
-
-config :greenbox,
-  abc_products_client: Greenbox.FakeClient
-
 # config/config.exs
 config :greenbox,
   abc_products_client: Greenbox.ProductClient
@@ -601,23 +613,16 @@ config :greenbox,
 
 ---
 
-Call to the external API
-
 ```elixir
-defmodule Greenbox.ProductClient do
-  def fetch_products do
-    response = url() |> HTTPoison.get!()
-    Poison.decode!(response.body)
-  end
+# config/test.exs
 
-  defp url do
-    Application.get_env(:greenbox, :abc_products_url)
-  end
-end
+config :greenbox,
+  abc_products_client: Greenbox.FakeClient
 ```
+
 ---
 
-## OR Stub requests with libraries
+## Other ways to stub requests in Elixir
 - Bypass (https://github.com/PSPDFKit-labs/bypass)
 - Mox (https://github.com/plataformatec/mox)
 
@@ -627,7 +632,7 @@ end
 ## Are they supposed to substitute tests?
 
 ---
-[.code-highlight: 4-9]
+[.code-highlight: 6-13]
 ```elixir
 # Doctest
 
@@ -636,9 +641,11 @@ defmodule Greenbox.Product do
 
   @doc """
   Converts price in cents to a string money format.
+
   ## Example:
     iex> Greenbox.Product.price_to_money(1245)
     "$12.45"
+
   """
   def price_to_money(price) do
     "$#{price / 100}"
@@ -651,14 +658,12 @@ defmodule Greenbox.Product do
 
 ---
 
-**Conclusions**
-
 - Write clear _**test descriptions**_
 - Follow the _**specifications**_
-- Always start _**outside-in**_
+- Think _**outside-in**_
 - Think in the Test _**Pyramid**_
 - Use _**stubs**_ or build fake clients
-- _**Don't test**_ behaviors callbacks
+- _**Don't test**_ callbacks
 - Abstract your code into _**modules**_
 
 ---
