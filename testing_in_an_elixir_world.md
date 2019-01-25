@@ -35,7 +35,7 @@
 
 ---
 
-# *But…* <br>
+# *However…* <br>
 # Are you bringing the *specifications* into code?
 
 ![](specs.jpg)
@@ -52,33 +52,34 @@
 ---
 
 # Why *testing*?
-[x] Be **self-confident**
+[x] Being **self-confident**
 
 ![right 80%](confident.jpg)
 
 ---
 
 # Why *testing*?
-[x] Be **self-confident**
-[x] Organize thoughts
+[x] Being **self-confident**
+[x] Organizing thoghts
 
 ![right 140%](thoughts.jpg)
 
 ---
 
 # Why *testing*?
-[x] Be **self-confident**
-[x] Organize thoghts
-[x] Keep the **costs low**
+[x] Being **self-confident**
+[x] Organizing thoghts
+[x] Keeping the **costs low**
 
 ![right 135%](low_costs.jpg)
 
 ---
+
 # Why *testing*?
-[x] Be **self-confident**
-[x] Organize thoughts
-[x] Keep the **costs low**
-[x] Bring **quality** to the code
+[x] Being **self-confident**
+[x] Organizing thoghts
+[x] Keeping the **costs low**
+[x] Bringing **quality** to the code
 
 ![right 90%](quality.jpg)
 
@@ -99,7 +100,7 @@
 - End to end
 - Close to the UI
 - Slow
-- External Quality
+- Guarantee External Quality
 
 ![right 200%](acceptance.png)
 
