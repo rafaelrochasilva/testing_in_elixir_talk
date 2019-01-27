@@ -131,7 +131,7 @@
 
 # Greenbox
 
-### Online store that sells <br> organic beauty products, <br> where users can choose a diffent variaty of <br> products and build its own box.
+### Online store that sells <br> organic beauty products, <br> where users can choose a diffent variety of <br> products and build its own box.
 
 - We have a stock that changes its prices every <br>*__10 minutes__*, due to our crazy promotions.
 
@@ -370,7 +370,7 @@ defmodule Greenbox.ProductFetcherTest do
 ```elixir
 # Let tests guide the development
 
-test "builds a product with the price with dollar sign" do
+test "builds a product with the price with a dollar sign" do
   product =
     ProductFetcher.build()
     |> List.first()
