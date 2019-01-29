@@ -23,7 +23,7 @@
   - Test Pyramid
   - Test Clarity
 - Use Case with **Elixir**
-  - Ouside-in approach
+  - Outside-in approach
   - Refactoring code with tests
   - Test double with fake clients
   - Doctests
@@ -68,7 +68,7 @@
 
 # Why *testing*?
 [x] Being **self-confident**
-[x] Organizing thoghts
+[x] Organizing thoughts
 [x] Keeping the **costs low**
 
 ![right 135%](low_costs.jpg)
@@ -77,7 +77,7 @@
 
 # Why *testing*?
 [x] Being **self-confident**
-[x] Organizing thoghts
+[x] Organizing thoughts
 [x] Keeping the **costs low**
 [x] Bringing **quality** to the code
 
@@ -153,7 +153,7 @@ As a User, I want to fetch products from abcdpricing.com so that we can store th
 ## Basically what we have to do:
 
 1) *Fetch Products* from the API
-2) Build a *structure* with id, capitalized name and price
+2) Build a *structure* with id, capitalized name, and price
 3) Consume the data
 
 ---
@@ -163,16 +163,16 @@ As a User, I want to fetch products from abcdpricing.com so that we can store th
 
 ---
 
-## What is the main outside layer of our tasks?
+## What is the primary outside layer of our tasks?
 [] *Fetch Products* from the API
-[] Build a *structure* with id, capitalized name and price
+[] Build a *structure* with id, capitalized name, and price
 [] Consume the data
 
 ---
 
-## What is the main outside layer of our tasks?
+## What is the primary outside layer of our tasks?
 [] Fetch Products from the API
-[] Build a structure with id, capitalized name and price
+[] Build a structure with id, capitalized name, and price
 _**[1] Consume the data**_
 
 ---
@@ -183,7 +183,7 @@ _**[1] Consume the data**_
 
 ## What is a GenServer?
 
-“A GenServer is a process like any other process in Elixir and it can be used to keep state, execute code asynchronously and so on."
+"A GenServer is a process like any other process in Elixir, and it can be used to keep state, execute code asynchronously and so on."
 -- Elixir Documentation
 
 ---
@@ -223,9 +223,9 @@ end
 
 ---
 
-## What is the main outside layer of our tasks?
+## What is the primary outside layer of our tasks?
 _**[2] Fetch Products from the API**_
-[] Build a structure with id, capitalized name and price
+[] Build a structure with id, capitalized name, and price
 [1] Consume the data
 
 ---
@@ -276,7 +276,7 @@ end
 
 ---
 
-## What is the main outside layer of our tasks?
+## What is the primary outside layer of our tasks?
 [2] Fetch Products from the API
 _**[3] Build a structure with id, capitalized name and price**_
 [1] Consume the data
@@ -522,7 +522,7 @@ end
 
 ---
 
-## Did you notice that we are *hitting the Api* every time we run our tests?
+## Did you notice that we are *hitting the API* every time we run our tests?
 
 ---
 
@@ -680,3 +680,4 @@ References:
 https://github.com/plataformatec/mox
 https://github.com/PSPDFKit-labs/bypass
 https://github.com/keathley/wallaby
+
