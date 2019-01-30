@@ -35,7 +35,7 @@
 
 ---
 
-# *However…* <br>
+# *However...* <br>
 # Are you bringing the *specifications* into code?
 
 ![](specs.jpg)
