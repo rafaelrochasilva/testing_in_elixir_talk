@@ -60,7 +60,7 @@
 
 # Why *testing*?
 [x] Being **self-confident**
-[x] Organizing thoghts
+[x] Organizing thoughts
 
 ![right 140%](thoughts.jpg)
 
