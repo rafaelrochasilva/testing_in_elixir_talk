@@ -673,6 +673,10 @@ defmodule Greenbox.Product do
 
 https://github.com/rafaelrochasilva/greenbox
 
+https://github.com/rafaelrochasilva/testing_in_elixir_talk
+
+http://blog.plataformatec.com.br/2018/11/starting-with-elixir-the-study-guide/
+
 ---
 
 References:
